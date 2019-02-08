@@ -47,12 +47,20 @@ app.set("port", port);
 
 var server = http.createServer(app);
 const io = socketIO(server);
+let usersList = [];
 io.on("connection", socket => {
   console.log("User connected");
-  socket.on("addmessage", message => {
+  socket.on("addMessage", messageDtls => {
     // messagesRecieved = message.messageText;
-    console.log("Message received : " + message.messageText);
-    socket.broadcast.emit("messagesadded", message);
+    console.log("Message received : " + messageDtls.messageText);
+    socket.broadcast.emit("messageAdded", messageDtls);
+  });
+  socket.on("addUser", userName => {
+    // messagesRecieved = message.messageText;
+    console.log("Message received : " + userName);
+    usersList.push(userName);
+    console.log(usersList);
+    socket.broadcast.emit("userAdded", usersList);
   });
 });
 
