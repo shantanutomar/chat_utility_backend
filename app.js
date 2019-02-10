@@ -49,6 +49,7 @@ var server = http.createServer(app);
 const io = socketIO(server);
 let usersList = [];
 io.on("connection", socket => {
+  socket.emit("userAdded", usersList);
   console.log("User connected");
   socket.on("addMessage", messageDtls => {
     // messagesRecieved = message.messageText;
@@ -60,7 +61,20 @@ io.on("connection", socket => {
     console.log("Message received : " + userName);
     usersList.push(userName);
     console.log(usersList);
-    socket.broadcast.emit("userAdded", usersList);
+    io.emit("userAdded", usersList);
+  });
+
+  socket.on("removeUser", userName => {
+    // messagesRecieved = message.messageText;
+    console.log("Username to remove is : " + userName);
+    usersList.splice(
+      usersList.findIndex(ele => {
+        return ele === userName;
+      }),
+      1
+    );
+    console.log(usersList);
+    io.emit("userAdded", usersList);
   });
 });
 
